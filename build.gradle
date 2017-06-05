@@ -27,6 +27,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 dependencies {
 	compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
 	compile("org.springframework.boot:spring-boot-starter-web")
+	compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 }
 
 
