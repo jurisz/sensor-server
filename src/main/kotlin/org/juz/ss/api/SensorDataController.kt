@@ -1,15 +1,14 @@
 package org.juz.ss.api
 
+import org.apache.commons.io.FileUtils
 import org.juz.ss.ApplicationConfiguration
 import org.juz.ss.util.JsonUtil
 import org.slf4j.LoggerFactory
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.io.File
 import java.time.LocalDateTime
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 
 @RestController
@@ -27,10 +26,27 @@ class SensorDataController(val applicationConfiguration: ApplicationConfiguratio
 		openDataFile().appendText(json + "\n")
 	}
 
+	@GetMapping("download")
+	fun download(response: HttpServletResponse) {
+		val file = openDataFile()
+		response.reset()
+		response.contentType = "text/html"
+		response.setDateHeader("Expires", 0)
+		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate")
+		response.setHeader("Pragma", "no-cache")
+		response.addHeader("Content-Length", java.lang.Long.toString(file.length()))
+		FileUtils.copyFile(file, response.outputStream)
+	}
+
+	@PostMapping("/clean-file")
+	fun cleanFile() {
+		log.warn("Deleting sensor data file")
+		openDataFile().delete()
+	}
+	
 	private fun openDataFile(): File {
 		val file = File(applicationConfiguration.sensorDataFilePath())
 		if (!file.exists()) {
-//			log.info("File: {}", file.absolutePath)
 			file.createNewFile()
 		}
 		return file
