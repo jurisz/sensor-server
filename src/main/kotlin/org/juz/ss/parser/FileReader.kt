@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter
 
 fun main(args: Array<String>) {
 
-	val input = FileUtils.openInputStream(File(sensorFilePath()))
+	val input = FileUtils.openInputStream(File("/home/juris/sensor-data/sensor-real-data.json"))
 	val reader = toBufferedReader(InputStreamReader(input, Charsets.toCharset(StandardCharsets.UTF_8)))
 
 	var line: String? = reader.readLine()
@@ -31,10 +31,12 @@ fun main(args: Array<String>) {
 				SensorDataRead::class.java
 		)
 
-		val time = convertAndApproximateTime(sensorData.eventTime)
-		val temp = findData(sensorData, "temp1")
-		val vv = findData(sensorData, "vv")
-		println("$time; $temp; $vv")
+		if (sensorData.name == "c1") {
+			val time = convertAndApproximateTime(sensorData.eventTime)
+			val temp = findData(sensorData, "temp")
+			val humidity = findData(sensorData, "humidity")
+			println("$time; $temp; $humidity")
+		}
 
 		line = reader.readLine()
 	}
